@@ -161,7 +161,7 @@ void win_init(win_t *win)
 	win->bar.r.buf = rbuf;
 	win->bar.l.size = sizeof(lbuf) - UTF8_PADDING;
 	win->bar.r.size = sizeof(rbuf) - UTF8_PADDING;
-	win->bar.h = options->hide_bar ? 0 : barheight;
+	win->bar.h = options->hide_bar ? barheight : 0;
 	win->bar.top = TOP_STATUSBAR;
 #endif /* HAVE_LIBFONTS */
 
