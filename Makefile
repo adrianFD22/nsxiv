@@ -54,6 +54,7 @@ dump_cppflags:
 
 clean:
 	rm -f *.o nsxiv version.h
+	rm -f config.h
 
 install-all: install install-desktop install-icon
 
