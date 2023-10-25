@@ -499,25 +499,51 @@ void tns_highlight(tns_t *tns, int n, bool hl)
 
 bool tns_move_selection(tns_t *tns, direction_t dir, int cnt)
 {
-	int old, max;
+	int old, max, oldcol, oldrow, newrow, newcol;
 
 	old = *tns->sel;
 	cnt = cnt > 1 ? cnt : 1;
 
 	switch (dir) {
 	case DIR_UP:
-		*tns->sel = MAX(*tns->sel - cnt * tns->cols, *tns->sel % tns->cols);
+		max = *tns->sel % tns->cols < *tns->cnt % tns->cols ?
+			*tns->cnt / tns->cols + 1 : *tns->cnt / tns->cols;
+
+		oldcol = *tns->sel % tns->cols;
+		oldrow = *tns->sel / tns->cols;
+		newrow = (((oldrow - cnt) % max) + max) % max;
+
+		*tns->sel = newrow * tns->cols  + oldcol;
 		break;
 	case DIR_DOWN:
-		max = tns->cols * ((*tns->cnt - 1) / tns->cols) +
-		      MIN((*tns->cnt - 1) % tns->cols, *tns->sel % tns->cols);
-		*tns->sel = MIN(*tns->sel + cnt * tns->cols, max);
+		max = *tns->sel % tns->cols < *tns->cnt % tns->cols ?
+			*tns->cnt / tns->cols + 1 : *tns->cnt / tns->cols;
+
+		oldcol = *tns->sel % tns->cols;
+		oldrow = *tns->sel / tns->cols;
+		newrow = (((oldrow + cnt) % max) + max) % max;
+
+		*tns->sel = newrow * tns->cols  + oldcol;
 		break;
 	case DIR_LEFT:
-		*tns->sel = MAX(*tns->sel - cnt, 0);
+		max = *tns->sel >= (*tns->cnt / tns->cols) * tns->cols ?
+			*tns->cnt % tns->cols : tns->cols;
+
+		oldrow = *tns->sel / tns->cols;
+		oldcol = *tns->sel % tns->cols;
+		newcol = (((oldcol - cnt) % max) + max) % max;
+
+		*tns->sel = oldrow * tns->cols  + newcol;
 		break;
 	case DIR_RIGHT:
-		*tns->sel = MIN(*tns->sel + cnt, *tns->cnt - 1);
+		max = *tns->sel >= (*tns->cnt / tns->cols) * tns->cols ?
+			*tns->cnt % tns->cols : tns->cols;
+
+		oldrow = *tns->sel / tns->cols;
+		oldcol = *tns->sel % tns->cols;
+		newcol = (((oldcol + cnt) % max) + max) % max;
+
+		*tns->sel = oldrow * tns->cols  + newcol;
 		break;
 	}
 
